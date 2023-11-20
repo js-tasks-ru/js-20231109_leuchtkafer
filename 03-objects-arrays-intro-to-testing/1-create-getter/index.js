@@ -9,7 +9,7 @@ export function createGetter(path) {
     let val;
     for (let item of pathToArr) {
       pathToArr.shift();
-      if (typeof obj[item] === 'object') {
+      if (obj[item] instanceof Object) {
         return getter(obj[item]);
       }
       val = obj[item];
