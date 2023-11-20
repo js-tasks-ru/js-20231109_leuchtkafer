@@ -5,10 +5,9 @@
  */
 export function invertObj(obj) {
   if (!obj) {
-    return undefined;
+    return;
   }
   return Object.fromEntries(Object.entries(obj).map((item) => {
-    const [key, value] = item;
-    return [value, key];
+    return [item.value, item.key];
   }));
 }
