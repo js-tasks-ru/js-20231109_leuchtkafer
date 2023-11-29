@@ -28,8 +28,12 @@ export default class SortableTable {
   createCellsTemplate(item) {
     return this.header
       .map(title => {
-        return `${title.id === 'images' ? `<img class="sortable-table-image" alt="Image" src=${item[title.id][0].url}>` : `<div class="sortable-table__cell">${item[title.id]}</div>`}`;
+        if (title.id === 'images') {
+          return `<img class="sortable-table-image" alt="Image" src=${item[title.id][0].url}>`;
+        }
+        return `<div class="sortable-table__cell">${item[title.id]}</div>`;
       }).join('');
+
   }
 
   createBodyTemplate() {
@@ -61,11 +65,19 @@ export default class SortableTable {
   }
 
   sortStrings(field, order) {
-    this.body = order === 'desc' ? this.body.sort((a, b) => b[field].localeCompare(a[field], ['ru', 'en'], { caseFirst: 'upper' })) : this.body.sort((a, b) => a[field].localeCompare(b[field], ['ru', 'en'], { caseFirst: 'upper' }));
+    if (order === 'desc') {
+      return this.body.sort((a, b) => b[field].localeCompare(a[field], ['ru', 'en'], { caseFirst: 'upper' }));
+    }
+
+    return this.body.sort((a, b) => a[field].localeCompare(b[field], ['ru', 'en'], { caseFirst: 'upper' }))
   }
 
   sortNumbers(field, order) {
-    this.body = order === 'desc' ? this.body.sort((a, b) => b[field] - a[field]) : this.body.sort((a, b) => a[field] - b[field]);
+    if (order === 'desc') {
+      return this.body.sort((a, b) => b[field] - a[field])
+    }
+
+    return this.body.sort((a, b) => a[field] - b[field]);
   }
 
   sort(field, order) {
@@ -77,9 +89,9 @@ export default class SortableTable {
     const currentSortType = this.header.find(item => item.id === field).sortType;
 
     if (currentSortType === 'string') {
-      this.sortStrings(field, order);
+      this.body = this.sortStrings(field, order);
     } else {
-      this.sortNumbers(field, order);
+      this.body = this.sortNumbers(field, order);
     }
 
     this.subElements.body.innerHTML = this.createBodyTemplate();
