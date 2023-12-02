@@ -1,6 +1,6 @@
-export default class SortableTable {
-  element;
-  subElements = null;
+import SortableTableV1 from "../../05-dom-document-loading/2-sortable-table-v1";
+
+export default class SortableTable extends SortableTableV1 {
   previousSortedHeader;
 
   constructor(headersConfig, {
@@ -8,6 +8,8 @@ export default class SortableTable {
     sorted = {},
     isSortLocally = true
   } = {}) {
+    super();
+
     this.header = headersConfig;
     this.body = data;
     this.sorted = sorted;
@@ -15,85 +17,20 @@ export default class SortableTable {
 
     this.createElement();
 
-    this.subElements = { body: this.element.querySelector('.sortable-table__body'), header: this.element.querySelector('.sortable-table__header') };
+    this.subElements = {
+      body: this.element.querySelector('.sortable-table__body'),
+      header: this.element.querySelector('.sortable-table__header')
+    };
 
-    this.subElements.header.addEventListener('click', (event) => this.onHeaderClick(event));
-
-    document.addEventListener("DOMContentLoaded", () => this.onDomLoaded());
-  }
-
-  createHeaderTemplate() {
-    return this.header
-        .map(item => {
-          return `<div class="sortable-table__cell" data-id="${item.id}" data-sortable="${item.sortable}">
-        <span>${item.title}</span>
-        ${item.sortable ? `<span data-element="arrow" class="sortable-table__sort-arrow">
-          <span class="sort-arrow"></span>
-        </span>` : ''}
-      </div>`;
-        })
-        .join('');
-  }
-
-  createCellsTemplate(item) {
-    return this.header
-        .map(title => {
-          if (title.id === 'images') {
-            return `<img class="sortable-table-image" alt="Image" src=${item[title.id][0].url}>`;
-          }
-          return `<div class="sortable-table__cell">${item[title.id]}</div>`;
-        }).join('');
-
-  }
-
-  createBodyTemplate() {
-    return this.body
-        .map(item => {
-          return `<a href="/products/${item.id}" class="sortable-table__row">
-            ${this.createCellsTemplate(item)}
-          </a>`;
-        })
-        .join('');
-  }
-
-  get template() {
-    return `<div class="sortable-table">
-      <div data-element="header" class="sortable-table__header sortable-table__row">
-          ${this.createHeaderTemplate()}
-      </div>
-      
-      <div data-element="body" class="sortable-table__body">
-          ${this.createBodyTemplate()}
-      </div>
-    </div>`;
-  }
-
-  createElement() {
-    const element = document.createElement('template');
-    element.insertAdjacentHTML('afterbegin', this.template);
-    this.element = element.firstElementChild;
-  }
-
-  sortStrings(field, order) {
-    if (order === 'desc') {
-      return this.body.sort((a, b) => b[field].localeCompare(a[field], ['ru', 'en'], { caseFirst: 'upper' }));
-    }
-
-    return this.body.sort((a, b) => a[field].localeCompare(b[field], ['ru', 'en'], { caseFirst: 'upper' }));
-  }
-
-  sortNumbers(field, order) {
-    if (order === 'desc') {
-      return this.body.sort((a, b) => b[field] - a[field]);
-    }
-
-    return this.body.sort((a, b) => a[field] - b[field]);
+    this.createListeners();
   }
 
   sort(field, order) {
     if (this.previousSortedHeader) {
       order = this.previousSortedHeader.getAttribute('data-order') === 'asc' ? 'desc' : 'asc';
       this.previousSortedHeader.removeAttribute('data-order');
+    } else {
+      order = !order || order === 'asc' ? 'desc' : 'asc';
     }
 
     if (this.isSortLocally) {
@@ -125,6 +62,16 @@ export default class SortableTable {
     console.log(`Сортировка на сервере. Поле: ${field} порядок: ${order}`);
   }
 
+  createListeners() {
+    this.subElements.header.addEventListener('pointerdown', (event) => this.onHeaderClick(event));
+    document.addEventListener("DOMContentLoaded", () => this.onDomLoaded());
+  }
+
+  removeListeners() {
+    this.subElements.header.removeEventListener('pointerdown', (event) => this.onHeaderClick(event));
+    document.removeEventListener("DOMContentLoaded", () => this.onDomLoaded());
+  }
+
   onHeaderClick(event) {
     const targetDataset = event.target.dataset.hasOwnProperty('id') ? event.target.dataset : event.target.parentNode.dataset;
     const { id, order, sortable } = targetDataset;
@@ -141,13 +88,8 @@ export default class SortableTable {
     }
   }
 
-  remove() {
-    this.element.remove();
-  }
-
   destroy() {
-    this.subElements.header.removeEventListener('click', (event) => this.onHeaderClick(event));
-    document.removeEventListener("DOMContentLoaded", () => this.onDomLoaded());
+    this.removeListeners();
     this.remove();
   }
 }

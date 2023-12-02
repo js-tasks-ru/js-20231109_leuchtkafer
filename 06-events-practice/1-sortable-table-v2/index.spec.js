@@ -90,7 +90,7 @@ describe('events-practice/sortable-table-v2', () => {
   it('should sort "desc" correctly for "sortType" equal string', () => {
     const { children } = sortableTable.subElements.header;
     const [title] = children;
-
+    // console.log(title.outerHTML);
     const pointerdown = new MouseEvent('pointerdown', {
       bubbles: true
     });
@@ -108,7 +108,7 @@ describe('events-practice/sortable-table-v2', () => {
   it('should sort "desc" correctly for "sortType" equal number', () => {
     const { children } = sortableTable.subElements.header;
     const [_, price] = children;
-
+    // console.log(price.outerHTML);
     const pointerdown = new MouseEvent('pointerdown', {
       bubbles: true
     });

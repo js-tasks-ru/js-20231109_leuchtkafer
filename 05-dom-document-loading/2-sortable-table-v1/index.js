@@ -1,4 +1,4 @@
-export default class SortableTable {
+export default class SortableTableV1 {
   element;
   subElements = null;
   previousSortedHeader;

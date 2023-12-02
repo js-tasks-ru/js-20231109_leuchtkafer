@@ -1,4 +1,4 @@
-import SortableTable from './index.js';
+import SortableTableV1 from './index.js';
 
 const data = [
   {
@@ -58,7 +58,7 @@ describe('dom-document-loading/sortable-table-v1', () => {
   let sortableTable;
 
   beforeEach(() => {
-    sortableTable = new SortableTable(header, data);
+    sortableTable = new SortableTableV1(header, data);
 
     document.body.append(sortableTable.element);
   });
