@@ -64,12 +64,12 @@ export default class SortableTable extends SortableTableV1 {
 
   createListeners() {
     this.subElements.header.addEventListener('pointerdown', (event) => this.onHeaderClick(event));
-    document.addEventListener("DOMContentLoaded", () => this.onDomLoaded());
+    document.addEventListener("DOMContentLoaded", this.onDomLoaded);
   }
 
   removeListeners() {
     this.subElements.header.removeEventListener('pointerdown', (event) => this.onHeaderClick(event));
-    document.removeEventListener("DOMContentLoaded", () => this.onDomLoaded());
+    document.removeEventListener("DOMContentLoaded", this.onDomLoaded);
   }
 
   onHeaderClick(event) {

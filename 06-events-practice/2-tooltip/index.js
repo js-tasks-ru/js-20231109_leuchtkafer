@@ -18,14 +18,14 @@ class Tooltip {
   }
 
   onDocumentPointerover = (event) => {
-    if (event.target.dataset.tooltip !== undefined) {
+    if (event.target.dataset.tooltip) {
       this.render();
       this.element.textContent = event.target.dataset.tooltip;
     }
   }
 
   onDocumentPointerout = (event) => {
-    if (event.target.dataset.tooltip !== undefined) {
+    if (event.target.dataset.tooltip) {
       this.remove();
     }
   }
@@ -42,12 +42,13 @@ class Tooltip {
   }
 
   createListeners() {
-    document.addEventListener("pointerover", (event) => this.onDocumentPointerover(event));
-    document.addEventListener("pointerout", (event) => this.onDocumentPointerout(event));
+    document.addEventListener('pointerover', this.onDocumentPointerover);
+    document.addEventListener('pointerout', this.onDocumentPointerout);
   }
 
   destroyListeners() {
-    document.removeEventListener("pointerover", () => this.onDocumentPointerover());
+    document.removeEventListener("pointerover", this.onDocumentPointerover);
+    document.addEventListener('pointerout', this.onDocumentPointerout);
   }
 
   remove() {
