@@ -39,7 +39,7 @@ export default class SortableTable extends SortableTableV1 {
       this.sortOnServer(field, order);
     }
 
-    const targetTitle = document.querySelector(`[data-id="${field}"]`);
+    const targetTitle = this.element.querySelector(`[data-id="${field}"]`);
 
     targetTitle.setAttribute('data-order', order);
 
