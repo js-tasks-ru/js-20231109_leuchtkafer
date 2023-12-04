@@ -63,16 +63,16 @@ export default class SortableTable extends SortableTableV1 {
   }
 
   createListeners() {
-    this.subElements.header.addEventListener('pointerdown', (event) => this.onHeaderClick(event));
+    this.subElements.header.addEventListener('pointerdown', this.onHeaderClick);
     document.addEventListener("DOMContentLoaded", this.onDomLoaded);
   }
 
   removeListeners() {
-    this.subElements.header.removeEventListener('pointerdown', (event) => this.onHeaderClick(event));
+    this.subElements.header.removeEventListener('pointerdown', this.onHeaderClick);
     document.removeEventListener("DOMContentLoaded", this.onDomLoaded);
   }
 
-  onHeaderClick(event) {
+  onHeaderClick = (event) => {
     const targetDataset = event.target.dataset.hasOwnProperty('id') ? event.target.dataset : event.target.parentNode.dataset;
     const { id, order, sortable } = targetDataset;
 
