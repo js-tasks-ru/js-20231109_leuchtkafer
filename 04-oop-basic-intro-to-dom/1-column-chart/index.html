@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>ColumnChart</title>
+    <title>ColumnChartV1</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
 
@@ -14,27 +14,27 @@
     </div>
 
     <script type="module">
-      import ColumnChart from './index.js';
+      import ColumnChartV1 from './index.js';
 
       const ordersData = [];
       const salesData = [ 30, 40, 20, 80, 35, 15 ];
       const customersData = [ 100, 90, 80, 35, 90, 25 ];
 
-      const ordersChart = new ColumnChart({
+      const ordersChart = new ColumnChartV1({
         data: ordersData,
         label: 'orders',
         value: 344,
         link: '#'
       });
 
-      const salesChart = new ColumnChart({
+      const salesChart = new ColumnChartV1({
         data: salesData,
         label: 'sales',
         value: 243437,
         formatHeading: data => `$${data}`
       });
 
-      const customersChart = new ColumnChart({
+      const customersChart = new ColumnChartV1({
         data: customersData,
         label: 'customers',
         value: 321

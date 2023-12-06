@@ -1,10 +1,10 @@
-import ColumnChart from './index.js';
+import ColumnChartV1 from './index.js';
 
 describe('oop-basic-intro-to-dom/column-chart', () => {
   let columnChart;
 
   beforeEach(() => {
-    columnChart = new ColumnChart({
+    columnChart = new ColumnChartV1({
       data: [],
       label: '',
       link: '',
@@ -27,7 +27,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
   it('should have ability to define "label"', () => {
     const label = 'New label';
 
-    columnChart = new ColumnChart({ label });
+    columnChart = new ColumnChartV1({ label });
 
     const title = columnChart.element.querySelector('.column-chart__title');
 
@@ -37,7 +37,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
   it('should have ability to define "link"', () => {
     const link = 'https://google.com';
 
-    columnChart = new ColumnChart({ link });
+    columnChart = new ColumnChartV1({ link });
 
     document.body.append(columnChart.element);
 
@@ -47,14 +47,14 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
   });
 
   it('should have property "chartHeight"', () => {
-    columnChart = new ColumnChart();
+    columnChart = new ColumnChartV1();
 
     expect(columnChart.chartHeight).toEqual(50);
   });
 
   it('should have ability to define total value', () => {
     const value = 200;
-    columnChart = new ColumnChart({ value });
+    columnChart = new ColumnChartV1({ value });
     const columnLink = columnChart.element.querySelector('.column-chart__header');
 
     expect(columnLink).toHaveTextContent(value);
@@ -64,7 +64,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
     const formatHeading = data => `USD ${data}`;
     const value = 100;
 
-    columnChart = new ColumnChart({ formatHeading, value });
+    columnChart = new ColumnChartV1({ formatHeading, value });
     const columnLink = columnChart.element.querySelector('.column-chart__header');
 
     expect(columnLink).toHaveTextContent(formatHeading(value));
@@ -73,7 +73,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
   it('should render data correctly', () => {
     const data = [10, 20, 30];
 
-    columnChart = new ColumnChart({ data });
+    columnChart = new ColumnChartV1({ data });
 
     const chart = columnChart.element.querySelector('.column-chart__chart');
     const columnProps = getColumnProps(data);
@@ -92,7 +92,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
   it('should have ability to be updated by new "data" values (should re-render only body with charts columns)', () => {
     const data = [10];
 
-    columnChart = new ColumnChart({ data });
+    columnChart = new ColumnChartV1({ data });
 
     const chart = columnChart.element.querySelector('.column-chart__chart');
 
@@ -106,7 +106,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
   });
 
   it('should have loading indication if data wasn\'t passed ', () => {
-    columnChart = new ColumnChart();
+    columnChart = new ColumnChartV1();
     document.body.append(columnChart);
 
     expect(columnChart.element).toHaveClass('column-chart_loading');

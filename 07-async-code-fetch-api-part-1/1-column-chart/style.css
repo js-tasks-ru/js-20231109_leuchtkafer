@@ -44,7 +44,7 @@ body {
   --chart-column-color: var(--purple);
 }
 
-/* ColumnChartV1 styles */
+/* ColumnChart styles */
 .column-chart__chart {
   width: 100%;
   height: calc(var(--chart-height) * 1px);
