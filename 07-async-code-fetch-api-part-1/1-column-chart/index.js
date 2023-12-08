@@ -26,8 +26,12 @@ export default class ColumnChart extends ColumnChartV1 {
   }
   // специально не использовала второй аргумент params и положила параметры в ссылку, тк почему-то перестало работать в процессе решения задачи (параметры не прокидывались)
   async loadData(from, to) {
+    let url = new URL(`${BACKEND_URL}/${this.url}`);
+    url.searchParams.set('from', from);
+    url.searchParams.set('to', to);
     this.element.classList.add('column-chart_loading');
-    return await fetchJson(`${BACKEND_URL}/${this.url}?from=${from}&to=${to}`);
+
+    return await fetchJson(url);
   }
 
   convertDate(date) {
