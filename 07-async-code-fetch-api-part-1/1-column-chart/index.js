@@ -26,7 +26,7 @@ export default class ColumnChart extends ColumnChartV1 {
   }
   // специально не использовала второй аргумент params и положила параметры в ссылку, тк почему-то перестало работать в процессе решения задачи (параметры не прокидывались)
   async loadData(from, to) {
-    let url = new URL(`${BACKEND_URL}/${this.url}`);
+    const url = new URL(`${BACKEND_URL}/${this.url}`);
     url.searchParams.set('from', from);
     url.searchParams.set('to', to);
     this.element.classList.add('column-chart_loading');
@@ -49,12 +49,12 @@ export default class ColumnChart extends ColumnChartV1 {
       super.update(values);
       this.element.classList.remove('column-chart_loading');
     } catch (error) {
-      new Error(error);
+      console.log(error);
     }
     return response;
   }
 
   createListener() {
-    document.addEventListener('DOMContentLoaded', () => this.update(this.from, this.to));
+    document.addEventListener('DOMContentLoaded', async () => this.update(this.from, this.to));
   }
 }

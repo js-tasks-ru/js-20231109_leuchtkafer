@@ -37,7 +37,8 @@ export default class SortableTable {
     this.loadData();
   }
 
-  render () {
+  async render () {
+    await this.loadData();
     this.subElements.body.innerHTML = this.createBodyTemplate();
   }
 
@@ -159,7 +160,7 @@ export default class SortableTable {
     this.subElements.loading.style.display = 'block';
     this.subElements.emptyPlaceholder.style.display = 'none';
 
-    let url = new URL(`${BACKEND_URL}/${this.url}`);
+    const url = new URL(`${BACKEND_URL}/${this.url}`);
     url.searchParams.set('_sort', id ?? this.sorted.id);
     url.searchParams.set('_order', order ?? this.sorted.order);
     url.searchParams.set('_start', this.start);
@@ -202,7 +203,7 @@ export default class SortableTable {
   }
 
   addObserver = () => {
-    let observer = new IntersectionObserver((entries, observer) => {
+    const observer = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && !this.loading) {
           this.loadData();
