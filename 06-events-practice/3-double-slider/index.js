@@ -2,7 +2,7 @@ export default class DoubleSlider {
   element;
   thumbPositionLeft;
   thumbPositionRight;
-  elementRect;
+  barWidth;
   range;
   progress;
 
@@ -26,13 +26,12 @@ export default class DoubleSlider {
     this.createElement();
     this.createListeners();
     this.bar = this.element.querySelector('.range-slider__inner');
-    this.elementRect = this.element.getBoundingClientRect();
     this.progress = this.element.querySelector('.range-slider__progress');
     this.range = this.max - this.min;
   }
 
   get template() {
-    return `<div class="range-slider">
+    return `<div class="range-slider" style="width: 300px">
       <span data-element="from">${this.formatValue ? this.formatValue(this.selected.from || this.min) : this.selected.from || this.min}</span>
         <div class="range-slider__inner">
           <span class="range-slider__progress" style="left: ${this.selected.from ?? this.min}%; right: ${this.selected.to ?? this.max}%"></span>
@@ -50,19 +49,18 @@ export default class DoubleSlider {
   }
 
   moveAtLeft = (clientX) => {
+    this.barWidth = this.element.querySelector('.range-slider__inner').getBoundingClientRect().width;
     const elem = this.element.querySelector('.range-slider__thumb-left');
+    const elemWidth = elem.offsetWidth;
     const elemFrom = this.element.querySelector('[data-element="from"]');
-    const shiftX = clientX - this.thumbPositionLeft;
-    let valInPx = shiftX < 0 ? 0 : shiftX > this.elementRect.width ? this.max : shiftX;
+    const shiftX = clientX - (this.thumbPositionLeft - (elemWidth / 2));
+    let valInPx = shiftX < 0 ? 0 : shiftX > this.barWidth ? this.barWidth : shiftX;
+
     if (shiftX < this.min) {
       elemFrom.textContent = this.min;
     }
-    // TODO: здесь логика чтобы левый ползунов не наползал на правый, но не падают тесты
-    // if (this.selected.to) {
-    //   const elem = this.element.querySelector('.range-slider__thumb-right');
-    //   valInPx = shiftX >= elem.offsetLeft ? elem.offsetLeft : shiftX;
-    // }
-    const valInPercent = valInPx / this.elementRect.width * 100;
+
+    const valInPercent = valInPx / this.barWidth * 100;
     elem.style.left = `${valInPercent}%`;
     this.progress.style.left = `${valInPercent}%`;
     const roundValue = (this.min + (this.range / 100 * valInPercent)).toFixed();
@@ -71,42 +69,35 @@ export default class DoubleSlider {
   }
 
   moveAtRight = (clientX) => {
+    this.barWidth = this.element.querySelector('.range-slider__inner').getBoundingClientRect().width;
     const elem = this.element.querySelector('.range-slider__thumb-right');
+    const elemWidth = elem.offsetWidth;
     const elemTo = this.element.querySelector('[data-element="to"]');
-    const shiftX = this.thumbPositionRight - clientX;
-    let valInPx = shiftX < 0 ? 0 : shiftX > this.elementRect.width ? this.max : shiftX;
+    const shiftX = this.thumbPositionRight - clientX + (elemWidth / 2);
+    let valInPx = shiftX < 0 ? 0 : shiftX > this.barWidth ? this.barWidth : shiftX;
 
-    if (clientX > this.max) {
+    if (shiftX > this.max) {
       elemTo.textContent = this.max;
     }
-    // TODO: здесь логика чтобы правый ползунок не наползал на левый, но падают тесты
-    // if (this.selected.from) {
-    //   const elem = this.element.querySelector('.range-slider__thumb-left');
-    //   valInPx = shiftX > elem.offsetLeft ? elem.offsetLeft : shiftX;
-    // }
-    const valInPercent = valInPx / this.elementRect.width * 100;
+
+    const valInPercent = valInPx / this.barWidth * 100;
     elem.style.right = `${valInPercent}%`;
     this.progress.style.right = `${valInPercent}%`;
     const roundValue = (this.max - (this.range / 100 * valInPercent)).toFixed();
     elemTo.textContent = this.formatValue ? this.formatValue(roundValue) : roundValue;
     this.selected.to = +roundValue;
-    if (clientX >= this.max) {
-      elemTo.textContent = this.max;
-    }
   }
 
   onDocumentPointermoveLeft = (event) => {
-    this.moveAtLeft(event.clientX);
-    this.dispatchEvent();
+    if (event.target === this.element.querySelector('.range-slider__thumb-left')) {
+      this.moveAtLeft(event.clientX);
+    }
   }
 
   onDocumentPointermoveRight = (event) => {
-    this.moveAtRight(event.clientX);
-    this.dispatchEvent();
-  }
-
-  onDomLoaded = () => {
-    this.elementRect = this.element.getBoundingClientRect();
+    if (event.target === this.element.querySelector('.range-slider__thumb-right')) {
+      this.moveAtRight(event.clientX);
+    }
   }
 
   dispatchEvent = () => {
@@ -120,40 +111,33 @@ export default class DoubleSlider {
     event.target.style.zIndex = '1000';
     this.thumbPositionLeft = this.bar.getBoundingClientRect().left;
 
-    this.moveAtLeft(event.clientX);
 
     document.addEventListener('pointermove', this.onDocumentPointermoveLeft);
-    document.addEventListener('pointerup', () => {
-      this.dispatchEvent();
-      document.removeEventListener('pointermove', this.onDocumentPointermoveLeft);
-    });
+    document.addEventListener('pointerup', this.onDocumentPointerUp);
   }
+
+  onDocumentPointerUp = () => {
+    this.dispatchEvent();
+    document.removeEventListener('pointermove', this.onDocumentPointermoveLeft);
+    document.removeEventListener('pointermove', this.onDocumentPointermoveRight);
+  };
 
   onThumbRightPointerdown = (event) => {
     event.target.style.zIndex = '1000';
     this.thumbPositionRight = this.bar.getBoundingClientRect().right;
 
-    this.moveAtRight(event.clientX);
-
     document.addEventListener('pointermove', this.onDocumentPointermoveRight);
-    document.addEventListener('pointerup', () => {
-      this.dispatchEvent();
-      document.removeEventListener('pointermove', this.onDocumentPointermoveRight);
-    });
+    document.addEventListener('pointerup', this.onDocumentPointerUp);
   }
 
   createListeners() {
     this.element.querySelector('.range-slider__thumb-left').addEventListener('pointerdown', this.onThumbLeftPointerdown);
     this.element.querySelector('.range-slider__thumb-right').addEventListener('pointerdown', this.onThumbRightPointerdown);
-    document.addEventListener('range-select', this.onThumbLeftPointerdown);
-    document.addEventListener('DOMContentLoaded', this.onDomLoaded);
   }
 
   destroyListeners() {
     this.element.querySelector('.range-slider__thumb-left').removeEventListener('pointerdown', this.onThumbLeftPointerdown);
     this.element.querySelector('.range-slider__thumb-right').removeEventListener('pointerdown', this.onThumbRightPointerdown);
-    document.removeEventListener('range-select', this.dispatchEvent);
-    document.removeEventListener('DOMContentLoaded', this.onDomLoaded);
   }
 
   remove() {
