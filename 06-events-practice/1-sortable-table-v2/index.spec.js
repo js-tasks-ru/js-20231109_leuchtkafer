@@ -1,4 +1,4 @@
-import SortableTable from './index.js';
+import SortableTableV2 from './index.js';
 
 const data = [
   {
@@ -58,7 +58,7 @@ describe('events-practice/sortable-table-v2', () => {
   let sortableTable;
 
   beforeEach(() => {
-    sortableTable = new SortableTable(headerConfig, {
+    sortableTable = new SortableTableV2(headerConfig, {
       data,
       sorted: {
         id: headerConfig.find(item => item.sortable).id,

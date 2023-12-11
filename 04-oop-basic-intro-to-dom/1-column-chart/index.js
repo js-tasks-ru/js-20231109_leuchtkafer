@@ -1,4 +1,4 @@
-export default class ColumnChart {
+export default class ColumnChartV1 {
   chartHeight = 50;
   element;
 
@@ -9,11 +9,15 @@ export default class ColumnChart {
     this.value = value;
     this.formatHeading = formatHeading;
 
-    this.createElement();
+    this.element = this.createElement();
   }
 
   columnClasses() {
     return `column-chart ${!this.data.length ? 'column-chart_loading' : ''}`;
+  }
+
+  createHeaderTemplate() {
+    return `${this.formatHeading ? this.formatHeading(this.value) : this.value}`;
   }
 
   createColumnsTemplate() {
@@ -36,7 +40,9 @@ export default class ColumnChart {
         ${this.link ? `<a class="column-chart__link" href="${this.link}">View all</a>` : ''}
       </div>
       <div class="column-chart__container">
-        <div data-element="header" class="column-chart__header">${this.formatHeading ? this.formatHeading(this.value) : this.value}</div>
+        <div data-element="header" class="column-chart__header">
+            ${this.createHeaderTemplate()}
+        </div>
         <div data-element="body" class="column-chart__chart">
            ${this.createColumnsTemplate()}
         </div>
@@ -47,11 +53,12 @@ export default class ColumnChart {
   createElement() {
     const element = document.createElement('template');
     element.insertAdjacentHTML('afterbegin', this.template);
-    this.element = element.firstElementChild;
+    return element.firstElementChild;
   }
 
   update(newData) {
     this.data = newData;
+    this.element.querySelector('.column-chart__header').innerHTML = this.createHeaderTemplate();
     this.element.querySelector('.column-chart__chart').innerHTML = this.createColumnsTemplate();
   }
 
