@@ -35,7 +35,7 @@ export default class ColumnChart extends ColumnChartV1 {
   }
 
   convertDate(date) {
-    return date.toLocaleDateString('ru').split('.').reverse().join('-');
+    return date.toLocaleString('ru', { dateStyle: 'short' });
   }
 
   async update(from, to) {
