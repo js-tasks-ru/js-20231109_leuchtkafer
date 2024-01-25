@@ -48,7 +48,7 @@ export default class ProductForm {
   </li>`;
   }
 
-  imageListTemplate = () => {
+  imageListTemplate () {
     return this.formData.images.map(item => this.imageListItemTemplate(item.source, item.url)).join('');
   }
 
